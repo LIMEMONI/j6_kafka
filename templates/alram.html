@@ -124,9 +124,6 @@
                                                 {% set i_e = item[2] %}
                                                 {% set status = item[3] %}
                                                 <li><a class="notification-item" href="/alram.html?time={{ val }}&xlim_s={{ i_s }}&xlim_e={{ i_e }}">M01 {{status}} 이상 발생 : {{ val }}</a></li>                                                    <!-- 알람음 추가 -->
-                                                    <audio id="alarmAudio" preload="auto">
-                                                        <source src="/static/alarm.mp3" type="audio/mpeg">
-                                                    </audio></a></li>
                                             {% endfor %}
                                             <li><a class="view-more" style="text-align: center;" href="/alram.html?time={{ bar_lis[0][0] }}&xlim_s={{ bar_lis[0][1] }}&xlim_e={{ bar_lis[0][2] }}" ><i class="lnr lnr-alarm" ></i> 더 보기</a></li>
                                         </ul>
@@ -339,7 +336,7 @@
 		
 			var layout = {
 				xaxis: {
-					range: [{{xlim_s-5}}, {{xlim_e+5}}], // row_num
+					range: [{{980}}, {{990+(xlim_e-xlim_s)}}], // row_num
                     tickformat: '%H:%M:%S',
 				},
 				yaxis: {

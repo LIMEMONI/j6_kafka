@@ -158,12 +158,7 @@ async def logout(request: Request):
 # MySQL 데이터베이스 연결 설정
 def create_connection():
     try:
-        # connection = mysql.connector.connect(
-        #     host="127.0.0.1",
-        #     user="root",
-        #     password="sejong131!#!",
-        #     database="ion",
-        # )
+
         connection = mysql.connector.connect(
             host="limemoni-2.cfcq69qzg7mu.ap-northeast-1.rds.amazonaws.com",
             user="oneday",
@@ -257,11 +252,7 @@ def fetch_bar_lis_from_database(n=1):
                             FROM rul_{n}_avg) AS temp
                         WHERE (rul_fl < 100) or (rul_pb < 100) or (rul_ph < 100);""")
         existing_user = cursor.fetchall()
-        # cursor.execute(f"""SELECT row_index, (row_index - LAG(row_index) OVER (ORDER BY row_index)) as diff
-        #                 FROM (SELECT rul_fl, rul_pb, rul_ph, input_time, ROW_NUMBER() OVER (ORDER BY input_time) AS row_index
-        #                     FROM rul_{n}) AS temp
-        #                 WHERE (rul_fl < 100) or (rul_pb < 100) or (rul_ph < 100);""")
-        # existing_user = cursor.fetchall()
+
 
 
         line_lis = []
@@ -358,15 +349,10 @@ def convert_to_year_month_day_hour(rul_value):
     """RUL 값을 년.월.일.시.분.초 형식으로 변환"""
     
     # 초 단위로 각 시간 값을 정의
-    SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 3600
     SECONDS_IN_DAY = SECONDS_IN_HOUR * 24
     SECONDS_IN_MONTH = SECONDS_IN_DAY * 30  
-    SECONDS_IN_YEAR = SECONDS_IN_DAY * 365 
 
-    # 각 시간 단위로 rul_value를 나누어 값 계산
-    # year = int(rul_value // SECONDS_IN_YEAR)
-    # rul_value %= SECONDS_IN_YEAR
 
     month = int(rul_value // SECONDS_IN_MONTH)
     rul_value %= SECONDS_IN_MONTH
@@ -374,11 +360,6 @@ def convert_to_year_month_day_hour(rul_value):
     day = int(rul_value // SECONDS_IN_DAY)
     rul_value %= SECONDS_IN_DAY
 
-    # hour = int(rul_value // SECONDS_IN_HOUR)
-    # rul_value %= SECONDS_IN_HOUR
-
-    # minute = int(rul_value // SECONDS_IN_MINUTE)
-    # rul_value %= SECONDS_IN_MINUTE 
 
     return (month,day)
 
@@ -671,15 +652,18 @@ async def render_dashboard4_page(request: Request):
     return templates.TemplateResponse("dashboard4.html", {"request": request, "mem_name": mem_name})
 
 @app.get("/alram.html")
-async def page_alram(request: Request, time: str, xlim_s: int, xlim_e: int):
+async def page_alram(request: Request, time: datetime, xlim_s: int, xlim_e: int):
     line_lis = None
     bar_lis = [[None, 0, 0]]
-    cursor.execute(f"""SELECT DATE_FORMAT(input_time, '%dD %H:%i:%s'), ACTUALROTATIONANGLE, FIXTURETILTANGLE,
-                        ETCHBEAMCURRENT,IONGAUGEPRESSURE,
-                        ETCHGASCHANNEL1READBACK, ETCHPBNGASREADBACK,
-                        ACTUALSTEPDURATION, ETCHSOURCEUSAGE,
-                        FLOWCOOLFLOWRATE,FLOWCOOLPRESSURE
-                    FROM input_data_1 order by input_time;""")
+    cursor.execute(f"""
+    SELECT DATE_FORMAT(input_time, '%H:%i:%s'), ACTUALROTATIONANGLE, FIXTURETILTANGLE,
+           ETCHBEAMCURRENT, IONGAUGEPRESSURE,
+           ETCHGASCHANNEL1READBACK, ETCHPBNGASREADBACK,
+           ACTUALSTEPDURATION, ETCHSOURCEUSAGE,
+           FLOWCOOLFLOWRATE, FLOWCOOLPRESSURE
+    FROM input_data_1 
+    ORDER BY input_time
+    LIMIT {xlim_e - xlim_s+2000} OFFSET {xlim_s-1000};""")
     existing_user = cursor.fetchall()
     
     colnames = cursor.description  # 변수정보
