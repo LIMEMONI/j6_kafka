@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://127.0.0.1:8000/ -->
+<html lang="en" class="fullscreen-bg">
+<head>
+    <script src="https://kit.fontawesome.com/02c33e7f68.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" sizes="76x76" href="static/img/top-icon.png">
+</head>
+<body>
+    <title> Login ㅣ FALP Service </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/vendor/linearicons/fonts/style.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="static/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="static/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+   <!-- ICONS -->
+   <link rel="apple-touch-icon" sizes="76x76" href="static/img/apple-icon.png">
+   <link rel="icon" type="image/png" sizes="96x96" href="static/img/favicon.png">
+    <script>
+        function openSlideUpPopup() {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            var popupWindow = window.open("/assets/login-detail/", "LoginDetailPopup", "width=" + width + ", height=" + height);
+            if (popupWindow) {
+                popupWindow.moveTo(0, height); // Start the popup window below the screen
+                popupWindow.resizeTo(width, height);
+                animateSlideUp(popupWindow);
+            }
+        }
+
+        function animateSlideUp(popupWindow) {
+            var duration = 500; // Animation duration in milliseconds
+            var start = popupWindow.screenY;
+            var end = 0; // Ending position at the top of the screen
+            var startTime = performance.now();
+
+            function step(currentTime) {
+                var elapsedTime = currentTime - startTime;
+                if (elapsedTime < duration) {
+                    var newPosition = start + (end - start) * (elapsedTime / duration);
+                    popupWindow.moveTo(0, newPosition);
+                    requestAnimationFrame(step);
+                } else {
+                    popupWindow.moveTo(0, end); // Ensure it reaches the final position
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+    </script>
+   <style>
+      body {
+         overflow: hidden;
+      }
+      
+      .animated-popup {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0, 0, 0, 0.7);
+         transition: opacity 0.5s;
+      }
+      
+      .popup-content {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         background-color: white;
+         padding: 20px;
+         border-radius: 5px;
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+         opacity: 0;
+         transition: opacity 0.5s, transform 0.5s;
+      }
+      
+      .animated-popup.show {
+         display: block;
+      }
+      
+      .animated-popup.show .popup-content {
+         opacity: 1;
+         transform: translate(-50%, -50%);
+      }
+
+    dialog {
+        font-family: 'Source Sans Pro', sans-serif;
+    } 
+   </style>
+</head>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper" style="background-image: url(static/img/로그인페이지_확장.png)" >
+        <div class="vertical-align-wrap">
+            <div class="vertical-align-middle">
+               <div class="auth-box" style="width: 350px;">
+                  <div class="left" style="text-align: center;">
+                     <div class="content">
+                        <div class="header">
+                           <div class="logo text-center">
+                              <img src="static/img/logo2.png" alt="Klorofil Logo" style="width: 100%; height:100%; margin-right: 5%;">
+                              <!-- <p class="lead">FALP</p> -->
+                           </div>
+                        </div>
+                    <div style="text-align: center;">
+                        <!-- form 요소에 id 속성 추가 -->
+                        <form class="form-auth-small" id="login-form" action="/login" method="post">
+                            <div class="form-group">
+                                <label for="signin-email" class="control-label sr-only"></label>
+                                <input type="email" class="form-control" id="signin-email" name="mem_id" placeholder="Email" style="color: #888;" autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="signin-password" class="control-label sr-only"></label>
+                                <input type="password" class="form-control" id="signin-password" name="mem_pass" placeholder="Password" style="color: #888;" autocomplete="current-password">
+                            </div>
+                            <div class="form-group clearfix">
+                                <label class="fancy-checkbox element-left">
+                                    <input type="checkbox">
+                                    <span>Remember me</span>
+                                </label>
+                            </div>
+                            <!-- 아래 부분은 오류 메시지를 표시하는 부분입니다. -->
+                            {% if message %}
+                            <div class="alert alert-warning" role="alert">
+                                <strong>{{ message }}</strong>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- 로그인 버튼 -->
+                            <button type="submit" id="login-button" class="btn btn-primary btn-lg btn-block">Log in</button>
+                            
+                            <div class="bottom">
+                                <span class="helper-text"><i class="fa-solid fa-envelope-open-text"></i> <a href="#" id="openModalLink">Contact</a></span>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+                <div class="content text">
+                    <h1 class="heading"></h1>
+                    <p></p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+   <!-- END WRAPPER -->
+
+<!-- contact 모달 창 -->
+<div id="myModal" class="modal">
+<div class="modal-content">
+    <div class="hero">
+        <span class="close" id="closeModal">&times;</span>
+        <form id="contact-form">
+            <div class="header" style="color: #fff; margin-top: 20px;">
+                <h1>CONTACT</h1>
+                <br>
+            </div>
+            <div class="detail" style="color: #fff;">
+                <p>문의 사항은 아래 양식을 작성해주시면 추후 연락드리겠습니다.</p>
+                <br>
+            </div>
+            <div class="row">
+            <div class="input-group">
+                <input type="text" id="name" required>
+                <label for="name"><i class="fa-regular fa-user"></i> Your Name</label>
+            </div>
+            <div class="input-group">
+                <input type="text" id="phone" required>
+                <label for="phone"><i class="fa-solid fa-phone"></i> Phone</label>
+            </div>
+            </div>
+            <div class="row">
+            <div class="input-group">
+                <input type="text" id="company" required>
+                <label for="company"><i class="fa-regular fa-building"></i> Company</label>
+            </div>
+            <div class ="input-group">
+                <input type="text" id="department" required>
+                <label for="department"><i class="fa-solid fa-people-group"></i> Department</label>
+            </div>
+            </div>
+            <div class="input-group">
+            <input type="text" id="email" required>
+            <label for="email"><i class="fa-regular fa-envelope"></i> Email</label>
+            </div>
+            <div class="input-group">
+            <textarea id="message" rows="8" required></textarea>
+            <label for="message"><i class="fa-regular fa-message fa-flip-horizontal"></i> Message</label>
+            </div>
+            <div class="footer_text" style="color: #fff; text-align: left;">
+                <h3>개인정보 수집 동의(필수) </h3>
+                <p> 수집하는 개인정보 항목 : 이름, 전화번호, 이메일 주소, 소속, 부서</p>
+                <p> 작성해 주시는 개인정보는 문의 접수를 위해 1년간 보관됩니다.</p>
+                <p> 이용자는 동의를 거부할 수 있으나, 미동의 시 문의 접수가 불가능합니다.</p>
+            </div>
+            <div class="footer_checkbox" style="color: #fff;">
+                <input type="checkbox" id="check_select" name="checkbox">
+                <label for="check_select"> 동의합니다. </label>
+            </div>
+            <div class="btn_yu" style="position : relative; top: 80%; left: 38%">
+            <button type="submit" class="button" id="myButton" disabled><i class="fa-regular fa-paper-plane"></i> Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<!-- contact :: send 버튼에 대한 모달창 -->
+<dialog id="dialog1" style="width: 20%; height: 20%; border-radius: 5px;">
+    <p style="font-weight: bold; font-size: 18px;">보내시겠습니까?</p>
+    <br>
+    <form method="dialog" id="dialog">
+       <button value="close">닫기</button>
+       <button value="confirm">확인</button>
+    </form>
+ </dialog>
+
+ <dialog id="dialog2" style="width: 20%; height: 20%; border-radius: 5px;">
+    <p style="font-weight: bold; font-size: 18px;">완료되었습니다.</p>
+    <br>
+    <form method="dialog" id="dialog">
+       <button value="close">닫기</button>
+    </form>
+ </dialog>
+
+<script>
+// 로그인 버튼 클릭 시 로그인 요청 (POST 요청으로)
+document.getElementById("login-button").addEventListener("click", function() {
+    const mem_id = document.getElementById("signin-email").value;
+    const mem_pass = document.getElementById("signin-password").value;
+
+    // 서버로 로그인 요청을 보냅니다. (POST 요청)
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ mem_id: mem_id, mem_pass: mem_pass }),
+    })
+    .then(response => {
+        // 서버에서 리디렉션한 경우, 새로운 페이지로 이동
+        if (response.redirected) {
+            window.location.href = response.url; // 로그인 성공 후 대시보드 페이지로 이동
+        } else {
+            // 리디렉션하지 않은 경우, 오류 메시지를 표시
+            return response.text();
+        }
+    })
+    //.then(data => {
+    //    if (data) {
+    //        alert(data);
+    //    }
+    //})
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+</script>
+
+    <script>
+        // contact 클릭시 이벤트 처리
+        var modal = document.getElementById("myModal");
+        var openModalLink = document.getElementById("openModalLink");
+        var closeModal = document.getElementById("closeModal");
+  
+        // 모달 내부의 input 요소를 선택합니다.
+        var inputElements = modal.querySelectorAll("input");
+  
+        // 하이퍼링크 클릭 시 모달 창 열기
+        openModalLink.addEventListener("click", function() {
+        modal.style.display = "block";
+        });
+  
+        // 스팬 태그 클릭 시 모달 창 닫기
+        closeModal.addEventListener("click", function() {
+           closeModalAndReset();
+        });
+  
+        // 모달 창 외부 클릭 시 닫기
+        window.addEventListener("click", function(event) {
+        if (event.target == modal) {
+           closeModalAndReset();
+        }
+        });
+  
+        // 모달을 닫고 입력 필드를 초기화하는 함수
+        function closeModalAndReset() {
+        modal.style.display = "none";
+  
+        // 입력 필드 초기화
+        inputElements.forEach(inputElement => {
+           inputElement.value = "";
+        });
+        }
+     </script>
+
+     <script>
+    // 모달 내 모든 입력(input)과 텍스트 영역(textarea) 요소, 그리고 체크박스를 가져옵니다.
+    var inputElements = document.querySelectorAll('#myModal input, #myModal textarea');
+    var myButton = document.getElementById('myButton');
+    var checkbox = document.getElementById("check_select");
+
+    // 모든 입력과 텍스트 영역 요소, 그리고 체크박스의 상태를 확인하는 함수
+    function checkInputs() {
+        var allInputsFilled = true;
+        for (var i = 0; i < inputElements.length; i++) {
+            if (inputElements[i].value.trim() === '') {
+            allInputsFilled = false;
+            break;
+            }
+        }
+
+        // 결과에 따라 버튼을 활성화 또는 비활성화하고 배경색을 변경합니다.
+        if (allInputsFilled && checkbox.checked) {
+            myButton.disabled = false;
+            myButton.style.backgroundColor = '#2B333E';
+        } else {
+            myButton.disabled = true;
+            myButton.style.backgroundColor = 'gray';
+        }
+    }
+
+    // 각 입력과 텍스트 영역 요소에 이벤트 리스너를 추가합니다.
+    inputElements.forEach(function (element) {
+        element.addEventListener('input', checkInputs);
+        });
+
+    </script>
+
+    <!--모달 창 send 이벤트 처리-->
+    <script>
+    // 모달 엘리먼트 가져오기
+    var dialog1 = document.getElementById('dialog1');
+    var dialog2 = document.getElementById('dialog2');
+    var contactForm = document.getElementById('contact-form'); // 추가: 폼 요소 가져오기
+
+    // "제출" 버튼 클릭 시 dialog1 열기
+    myButton.addEventListener('click', function(event) {
+        event.preventDefault(); // 추가: 기본 제출 동작 방지
+        dialog1.showModal();
+    });
+
+    // dialog1에서 버튼 클릭 시 처리
+    dialog1.addEventListener('click', function(e) {
+        if (e.target.value === 'confirm') {
+            // 추가: "확인" 버튼을 클릭하면 dialog1 닫고 dialog2 열기
+            dialog1.close();
+            dialog2.showModal();
+        } else if (e.target.value === 'close') {
+            // "닫기" 버튼을 클릭하면 dialog1 닫기
+            dialog1.close();
+        }
+    });
+    
+    // dialog2에서 버튼 클릭 시 처리
+    dialog2.addEventListener('click', function(e) {
+        if (e.target.value === 'close') {
+            // "닫기" 버튼을 클릭하면 dialog2 닫고 페이지 초기화
+            dialog2.close();
+            location.reload(); // 페이지 초기화
+        }
+    });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Profile Page</title>
+
+    <meta name="author" content="Codeconvey" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet"><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'>
+    <script src="https://kit.fontawesome.com/02c33e7f68.js" crossorigin="anonymous"></script>
+
+    <!--Only for demo purpose - no need to add.-->
+    <link rel="stylesheet" href="/static/css/demo.css" />
+    
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+    .table.table-bordered {
+      height: 330px; /* 원하는 높이로 조정하세요. */
+      overflow-y: auto; /* 표의 내용이 넘칠 경우 스크롤 표시 */
+    }
+    </style> 
+    <style>
+      .student-profile .card-body {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+      }
+    </style> 
+    <style>
+/* styles.css */
+.table th {
+  background-color: #f2f2f2; /* 헤더 배경색 */
+  padding: 10px; /* 셀 내 여백 */
+  text-align: right; /* 텍스트 오른쪽 정렬 */
+  border: 2px solid #000; /* 테두리 선 두껍게 그리기 */
+}
+
+.table td {
+  padding: 10px; /* 셀 내 여백 */
+  border: 2px solid #000; /* 테두리 선 두껍게 그리기 */
+}
+
+.table td, .table th {
+  text-align: center; /* 텍스트 중앙 정렬 */
+  font-size: 20px; /* 글자 크기 20px로 설정 */
+}
+
+  </style>
+  
+</head>
+<body>
+      
+<div class="ScriptTop">
+    <div class="rt-container">
+        <div class="col-rt-4" id="float-right">
+ 
+            <!-- Ad Here -->
+            
+        </div>
+        <div class="col-rt-">
+            <ul>
+                <li><a href="/static/css/img/user1.png" title="Back to tutorial page">Back to Tutorial</a></li>
+            </ul>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+</div>
+
+
+<section>
+    <div class="rt-container">
+          <div class="col-rt-12">
+              <div class="Scriptcontent">
+              
+<!-- Student Profile -->
+<div class="student-profile py-4">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-4">
+              <div class="card shadow-sm">
+                  <div class="card-header bg-transparent text-center">
+                      <img src="static//img/user1.png" class="img-square" alt="Picture">
+                      <h3>{{mem_name}}</h3> <button type="button" class="btn active" data-bs-toggle="button" aria-pressed="true">Edit</button>
+                  </div>
+                  <div class="card-body" style="margin-top: 0px; text-align: center;">
+                    <br>
+                    <strong class="pr-1"><i class="fa-solid fa-id-card"></i> 아이디</strong> {{mem_id}}<br>
+                    <br>
+                    <strong class="pr-1"><i class="fa-solid fa-id-badge"></i> 직책</strong> 팀장<br>
+                    <br>
+                    <strong class="pr-1"><i class="fa-solid fa-phone"></i> 연락처</strong> {{mem_ph}}
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h3 class="mb-0"><i class="far fa-clone pr-1"></i>직원 정보</h3>
+                </div>
+                <div class="card-body pt-0">
+                    <table class="table table-bordered" style="text-align: center;">
+                        <tr>
+                            <th width="30%" style="font-size: 15px; vertical-align: middle;"><i class="fa-solid fa-venus-mars"></i> 성별</th>
+                            <td style="font-size: 15px; vertical-align: middle;">Male</td>
+                        </tr>
+                        <tr>
+                            <th width="30%" style="font-size: 15px; vertical-align: middle;"><i class="fa-solid fa-droplet"></i> 혈액형</th>
+                            <td style="font-size: 15px; vertical-align: middle;">B+</td>
+                        </tr>
+                        <tr>
+                            <th width="30%" style="font-size: 15px; vertical-align: middle;"><i class="fa-solid fa-building-user"></i> 부서명</th>
+                            <td style="font-size: 15px; vertical-align: middle;">Etching</td>
+                        </tr>
+                        <tr>
+                            <th width="30%" style="font-size: 15px; vertical-align: middle;"><i class="fa-solid fa-briefcase"></i> 복무 여부</th>
+                            <td style="font-size: 15px; vertical-align: middle;">근무 중</td>
+                        </tr>
+                        <tr>
+                            <th width="30%" style="font-size: 15px; vertical-align: middle;"><i class="fa-solid fa-clock"></i> 근무 시간</th>
+                            <td style="font-size: 15px; vertical-align: middle;">08:00 ~ 17:00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>        
+    </div>
+  </div>
+</div>
+<!-- partial -->
+           
+          </div>
+      </div>
+    </div>
+</section>
+
+<script src="static/vendor/jquery/jquery.min.js"></script>
+<script src="static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="static/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="static/scripts/klorofil-common.js"></script>
+   </body>
+</html>

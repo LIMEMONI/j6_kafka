@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Profile ㅣ FALP Service</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- VENDOR CSS -->
+	<link rel="stylesheet" href="static/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="static/vendor/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="static/vendor/linearicons/style.css">
+	<!-- MAIN CSS -->
+	<link rel="stylesheet" href="static/css/main.css">
+	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+	<link rel="stylesheet" href="static/css/demo.css">
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="static/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="static/img/favicon.png">
+	<!-- D3.js 라이브러리 추가 -->
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="/static/js/slimscroll.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/02c33e7f68.js" crossorigin="anonymous"></script>
+    <style>
+        /* Google Fonts에서 가져온 Roboto 폰트를 적용 */
+        #sidebar-nav {
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
+        }
+    
+        /* Nav 내의 리스트 아이템에 적용된 스타일 변경 */
+        #sidebar-nav li {
+            list-style: none;
+            margin: 10px 0;
+        }
+    
+        #sidebar-nav a {
+            text-decoration: none;
+            color: #fff; /* 글자 색상 설정 */
+            transition: color 0.3s; /* 색상 변경 시 부드러운 전환 효과 */
+        }
+    
+        #sidebar-nav a:hover {
+            color: #007bff; /* 마우스 호버 시 글자 색상 변경 */
+        }
+    </style>
+    <style>
+        /* 알람 갯수를 표시하는 숫자 스타일 */
+        .alarm-count-badge {
+            position: absolute;
+            top: 23px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            width: 20px; /* 숫자 너비 조정 */
+            height: 15px; /* 숫자 높이 조정 */
+            border-radius: 50%;
+            font-size: 11px; /* 숫자 크기 조정 */
+            text-align: center; /* 가운데 정렬을 위한 설정 */
+            line-height: 15px; /* 숫자 높이와 같도록 설정 */
+            font-weight: bold;
+        }
+    </style>    
+</head>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- NAVBAR -->
+                <nav class="navbar navbar-default navbar-fixed-top"  style="height: 12%;">
+                    <!-- 로고와 데이터 불러오기 버튼 -->
+                    <div class="navbar-header">
+                        <!-- 오른쪽 메뉴 아이콘들 --> 
+                        <div class="container-fluid" style="display: flex; justify-content: flex-end;">     
+                            <div id="navbar-menu">
+                                <a class="navbar-brand" style="width: 15%; height: 15%; margin-top: 20px; display: flex; align-items: center;">
+                                    <img src="static/img/logo2.png" alt="J6 Logo" class="img-responsive logo">   
+                                </a>
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li style="margin-right: 10px;"><a href="main.html"><i class="fa-solid fa-house"></i></a></li>
+                                    <li style="margin-right: 10px;"><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle icon-menu" data-toggle="dropdown" id="alarmDropdownButton">
+                                            <i class="fa-solid fa-bell"></i>
+                                        </a>
+                                    <!-- 알람 드롭다운 메뉴 -->
+                                    <ul class="dropdown-menu notifications">
+                                        {% for item in bar_lis[:5] %}
+                                            {% set val = item[0] %}
+                                            {% set i_s = item[1] %}
+                                            {% set i_e = item[2] %}
+                                            <li><a class="notification-item" href="/alram.html?time={{ val }}&xlim_s={{ i_s }}&xlim_e={{ i_e }}"> 이상 발생 : {{ val }}</a></li>
+                                        {% endfor %}
+                                        <li><a class="view-more" style="text-align: center;" href="/alram.html?time={{ bar_lis[0][0] }}&xlim_s={{ bar_lis[0][1] }}&xlim_e={{ bar_lis[0][2] }}" ><i class="lnr lnr-alarm" ></i> 더 보기</a></li>
+                                    </ul>
+                                    <span class="alarm-count-badge">{{ bar_lis|length }}</span>
+                                    </li>
+                                    <!-- 나머지 메뉴 아이콘들 -->
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <li><a href="profile.html"><img src="static/img/user1.png" class="img-square" alt="Picture"><span style="font-weight: bold;">{{ mem_name }}</span></a></li>
+                                        </a>
+                                        <li><a href="/"><i class="fa-solid fa-arrow-right-from-bracket"></i><span style="font-weight: bold;">Logout</span></a></li>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- END NAVBAR -->
+    
+        <!-- iframe 태그 -->
+        <iframe id="iframe" width="100%" height="620" style="align: center;" frameborder="0"></iframe>
+		<!-- END MAIN -->
+		<div class="clearfix"></div>
+		<footer style="height: 1%;">
+			<div class="container-fluid">
+				<p class="copyright">Made by <i class="fa fa-love"></i><a href="https://bootstrapthemes.co">J6</a></p>
+			</div>
+		</footer>
+	</div>
+	<!-- END WRAPPER -->
+
+
+ <!-- Javascript -->
+ <script src="static/vendor/jquery/jquery.min.js"></script>
+ <script src="static/vendor/bootstrap/js/bootstrap.min.js"></script>
+ <script src="static/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+ <script src="static/scripts/klorofil-common.js"></script>
+ <script>
+      function logout() {
+          // 서버로 로그아웃 요청을 보내기 위해 fetch 사용
+          fetch('/logout', {
+              method: 'POST'
+          })
+          .then(response => {
+              if (response.redirected) {
+                  // 로그아웃 후, 홈 페이지로 리디렉션
+                  window.location.href = response.url;
+              }
+          })
+          .catch(error => {
+              console.error('로그아웃 오류:', error);
+          });
+      }
+  </script>
+  <script>
+      // 파일 업로드 버튼 클릭 시 호출되는 함수
+      function uploadFile() {
+          var fileInput = document.getElementById('csvFile');
+          var file = fileInput.files[0];
+  
+          var formData = new FormData();
+          formData.append("file", file);
+  
+          // 서버에 파일을 업로드합니다.
+          $.ajax({
+              type: "POST",
+              url: "/uploadfile/",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                  // 파일 업로드가 성공하면 원하는 작업을 수행합니다.
+                  // response.filename를 사용하여 업로드된 파일 이름을 확인할 수 있습니다.
+              },
+              error: function (error) {
+                  // 파일 업로드 중 오류가 발생하면 처리합니다.
+              }
+          });
+      }
+  </script>
+
+  <script>
+      $(document).ready(function() {
+          // 알람 드롭다운 메뉴를 토글하기
+          $("#alarmDropdownButton").click(function() {
+              $(".notifications").toggle();
+          });
+  
+          // "더 보기" 버튼을 클릭했을 때 이벤트 처리
+          $(".view-more").click(function() {
+              // "alram.html"로 이동
+              window.location.href = "alram.html";
+          });
+       // 프로필 페이지 로딩 후 iframe에 profile1.html 표시
+       var iframe = document.getElementById('iframe');
+       iframe.src = 'profile1.html';
+    });
+  </script>
+</body>
+</html>

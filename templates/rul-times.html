@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUL Times</title>
+    <script>
+        // 페이지가 로드된 후 함수 실행
+        window.onload = function() {
+            // 4초마다 함수 실행
+            setInterval(async function(){
+                let response = await fetch("/rul-times/");
+                let text = await response.text();
+                document.body.innerHTML = text; // 화면 갱신
+            }, 4000); // 4초 간격
+        };
+    </script>
+</head>
+<body>
+    <h1>RUL Times</h1>
+    <ul>
+        {% for time in rul_times %}
+        <li>{{ time }}</li>
+        {% endfor %}
+        {% for pred in multi_preds %}
+        <li>{{ pred }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            display: inline-block;
+            text-align: left;
+            background-color: #fff;
+            padding: 80px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+    </style>
+    <link rel="icon" type="image/png" sizes="96x96" href="static/img/j6.png">
+</head>
+<body>
+    <h1>회원가입</h1>
+    <form id="registration-form">
+        <div>
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="mem_name" autocomplete="username" required>
+        </div>
+        <div>
+            <label for="birthdate">생년월일 (8자리):</label>
+            <input type="text" id="birthdate" name="mem_regno" pattern="[0-9]{8}" required>
+        </div>
+        <div>
+            <label for="phone">휴대폰 번호:</label>
+            <input type="text" id="phone" name="mem_ph" autocomplete="username" required>
+        </div>
+        <div>
+            <label for="username">아이디:</label>
+            <input type="text" id="username" name="mem_id" autocomplete="username" required>
+            <button type="button" id="check-username-button">중복확인</button>
+        </div>
+        <div>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" name="mem_pass" required>
+        </div>
+        <div>
+            <label for="confirm_password">비밀번호 재확인:</label>
+            <input type="password" id="confirm_password" name="mem_pass2" required>
+        </div>
+        <button type="button" id="submit-button">가입하기</button>
+    </form>
+
+    <script>
+        let isUsernameValid = false;
+
+        // 중복 확인 버튼 클릭 시 아이디 중복 확인
+        document.getElementById("check-username-button").addEventListener("click", function() {
+            const username = document.getElementById("username").value;
+
+            // 서버로 아이디 중복 확인 요청을 보냅니다.
+            fetch("/check_username", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `username=${username}`,
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.includes("사용 가능한 아이디입니다.")) {
+                    alert("사용 가능한 아이디입니다.");
+                    isUsernameValid = true;
+                } else {
+                    alert("이미 존재하는 아이디입니다. 다른 아이디를 사용해주세요.");
+                    isUsernameValid = false;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+        // 회원가입 버튼 클릭 시 실제 회원가입 요청
+        document.getElementById("submit-button").addEventListener("click", function() {
+            const formData = new FormData(document.getElementById("registration-form"));
+            const jsonData = {};
+
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            // 아이디 중복 확인이 완료되었는지 확인
+            if (!isUsernameValid) {
+                alert("아이디 중복 확인을 먼저 진행해주세요.");
+                return;
+            }
+
+            // 서버로 회원가입 요청을 보냅니다.
+            fetch("/process_registration", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            })
+            .then(response => response.text())
+            .then(data => {
+                window.location.href = "/";
+                
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>

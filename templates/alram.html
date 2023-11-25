@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AbnormalㅣFALP Service</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/static/vendor/chartist/css/chartist-custom.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="/static/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/img/top-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/img/top-icon.png">
+    <!-- D3.js 라이브러리 추가 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/slimscroll.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/02c33e7f68.js" crossorigin="anonymous"></script>
+    <style>
+        /* Google Fonts에서 가져온 Source Sans Pro 폰트를 적용 */
+        #sidebar-nav {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 20px;
+        }
+    
+        /* Nav 내의 리스트 아이템에 적용된 스타일 변경 */
+        #sidebar-nav li {
+            list-style: none;
+            margin: 10px 0;
+        }
+    
+        #sidebar-nav a {
+            text-decoration: none;
+            color: #fff; /* 글자 색상 설정 */
+            transition: color 0.3s; /* 색상 변경 시 부드러운 전환 효과 */
+        }
+    
+        #sidebar-nav a:hover {
+            color: #007bff; /* 마우스 호버 시 글자 색상 변경 */
+        }
+    </style>
+    <style>
+        /* 알람 갯수를 표시하는 숫자 스타일 */
+        .alarm-count-badge {
+            position: absolute;
+            top: 23px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            width: 20px; /* 숫자 너비 조정 */
+            height: 15px; /* 숫자 높이 조정 */
+            border-radius: 50%;
+            font-size: 11px; /* 숫자 크기 조정 */
+            text-align: center; /* 가운데 정렬을 위한 설정 */
+            line-height: 15px; /* 숫자 높이와 같도록 설정 */
+            font-weight: bold;
+        }
+    </style> 
+    <style>
+        /* 스크롤 가능한 목록 스타일 */
+        .nav-scroll {
+            max-height: 610px; /* 스크롤 가능한 높이를 조절하십시오. */
+            overflow-y: scroll;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #ccc;
+        }
+        .nav-scroll::-webkit-scrollbar {
+            width: 10px; /* 스크롤바 폭 설정 */
+        }
+        .nav-scroll::-webkit-scrollbar-thumb {
+            background-color: #333; /* 스크롤바 썸의 배경색 설정 */
+        }
+        .nav-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: #666; /* 호버 상태일 때 스크롤바 썸의 배경색 설정 */
+        }
+    </style>
+    <style>
+        dialog {
+            font-family: 'Source Sans Pro', sans-serif;
+        } 
+    </style>
+</head>
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- NAVBAR -->
+                <nav class="navbar navbar-default navbar-fixed-top"  style="height: 12%;">
+                    <!-- 로고와 데이터 불러오기 버튼 -->
+                    <div class="navbar-header">
+                        <!-- 오른쪽 메뉴 아이콘들 --> 
+                        <div class="container-fluid" style="display: flex; justify-content: flex-end;">     
+                            <div id="navbar-menu">
+                                <a class="navbar-brand" style="width: 15%; height: 15%; margin-top: 20px; display: flex; align-items: center;">
+                                    <img src="static/img/logo2.png" alt="J6 Logo" class="img-responsive logo">   
+                                </a>
+                                <div class="navbar-btn">
+                                    <button type="button" class="btn-toggle-fullwidth" style="font-size: 25px;"><i class="lnr lnr-arrow-left-circle"></i></button>
+                                </div>
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li style="margin-right: 10px;"><a href="main.html"><i class="fa-solid fa-house"></i></a></li>
+                                    <li style="margin-right: 10px;"><a href="dashboard.html"><i class="fa-solid fa-chart-line"></i></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle icon-menu" data-toggle="dropdown" id="alarmDropdownButton">
+                                            <i class="fa-solid fa-bell"></i>
+                                        </a>
+                                        <!-- 알람 드롭다운 메뉴 -->
+                                        <ul class="dropdown-menu notifications">
+                                            {% for item in bar_lis[:5] %}
+                                                {% set val = item[0] %}
+                                                {% set i_s = item[1] %}
+                                                {% set i_e = item[2] %}
+                                                {% set status = item[3] %}
+                                                <li><a class="notification-item" href="/alram.html?time={{ val }}&xlim_s={{ i_s }}&xlim_e={{ i_e }}">M01 {{status}} 이상 발생 : {{ val }}</a></li>                                                    <!-- 알람음 추가 -->
+                                                    <audio id="alarmAudio" preload="auto">
+                                                        <source src="/static/alarm.mp3" type="audio/mpeg">
+                                                    </audio></a></li>
+                                            {% endfor %}
+                                            <li><a class="view-more" style="text-align: center;" href="/alram.html?time={{ bar_lis[0][0] }}&xlim_s={{ bar_lis[0][1] }}&xlim_e={{ bar_lis[0][2] }}" ><i class="lnr lnr-alarm" ></i> 더 보기</a></li>
+                                        </ul>
+                                    <span class="alarm-count-badge">{{ bar_lis|length }}</span>
+                                    </li>
+                                    <!-- 나머지 메뉴 아이콘들 -->
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <li><a href="profile.html"><img src="static/img/user1.png" class="img-square" alt="Picture"><span style="font-weight: bold;">{{ mem_name }}</span></a></li>
+                                        </a>
+                                        <li><a href="/"><i class="fa-solid fa-arrow-right-from-bracket"></i><span style="font-weight: bold;">Logout</span></a></li>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- END NAVBAR -->
+    
+        <!-- LEFT SIDEBAR -->
+        <div id="sidebar-nav" class="sidebar">
+            <div class="sidebar-scroll">
+                <nav>
+                    <ul class="nav">
+                        <li><a href="#subPages" data-toggle="collapse" class="collapsed"><i class="fa-solid fa-bell"></i> <span> 이상 목록 </span><i class="icon-submenu lnr lnr-chevron-left"></i></a>
+                            <div id="subPages" class="collapse">
+                                <ul class="nav">
+                                    {% for item in bar_lis %}
+                                        {% set val = item[0] %}
+                                        {% set i_s = item[1] %}
+                                        {% set i_e = item[2] %}
+                                        {% set status = item[3] %}
+                                        <li><a href="/alram.html?time={{ val }}&xlim_s={{ i_s }}&xlim_e={{ i_e }}"><span style="font-size: 15px; display: block;">{{ val }}</span><span style="font-size: 15px; display: block;">M01 {{status}}</span><span style="font-size: 15px; display: block;">이상 발생</span></a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>  
+                <div class="text-center" style="position: absolute; bottom: 10px; width: 100%;">
+                    <span class="helper-text" style="font-size: 16px;"><i class="fa-solid fa-wrench"></i> <a href="#" id="myButton"> J6 Pro</a></span>
+                </div>
+            </div>
+        </div>
+        <!-- END LEFT SIDEBAR -->
+
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">Detail_page : {{time}}</h3>
+
+                    {% for val in cols %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">{{val[1]}}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="demo-chart{{val[0]}}" class="ct-chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">{{val[2]}}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="demo-chart{{val[0] + 1}}" class="ct-chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					{% endfor %}
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+        <div class="clearfix"></div>
+        <footer>
+            <div class="container-fluid">
+                <p class="copyright">Made by <i class="fa fa-love"></i><a href="https://bootstrapthemes.co">J6</a></p>
+            </div>
+        </footer>
+    </div>
+    <!-- END WRAPPER -->
+
+    <!-- contact :: 수리 버튼에 대한 모달창 -->
+    <dialog id="dialog1" style="width: 20%; height: 20%; border-radius: 5px;">
+        <p style="font-weight: bold; font-size: 18px;">수리 요청 하시겠습니까?</p>
+        <br>
+        <form method="dialog" id="dialog">
+        <button value="close">닫기</button>
+        <button value="confirm">확인</button>
+        </form>
+    </dialog>
+
+    <dialog id="dialog2" style="width: 20%; height: 20%; border-radius: 5px;">
+        <p style="font-weight: bold; font-size: 18px;">정상적으로 요청되었습니다.</p>
+        <br>
+        <form method="dialog" id="dialog">
+        <button value="close">닫기</button>
+        </form>
+    </dialog>
+
+    <!-- ChartJavascript -->
+    <script>
+        // 스크롤 가능한 컨테이너와 호버 가능한 항목을 선택합니다.
+        var scrollContainer = document.querySelector('.nav-scroll');
+        var notificationItems = document.querySelectorAll('.notification-item');
+        
+        // 스크롤 이벤트 핸들러를 추가합니다.
+        scrollContainer.addEventListener('scroll', function() {
+            // 스크롤 위치를 가져옵니다.
+            var scrollPosition = scrollContainer.scrollTop;
+        
+            // 각 항목에 대한 위치와 호버 효과를 관리합니다.
+            notificationItems.forEach(function(item) {
+                var itemPosition = item.offsetTop;
+        
+                // 스크롤 위치와 항목 위치를 비교하여 호버 클래스를 추가 또는 제거합니다.
+                if (scrollPosition >= itemPosition && scrollPosition < itemPosition + item.clientHeight) {
+                    item.classList.add('hovered');
+                } else {
+                    item.classList.remove('hovered');
+                }
+            });
+        });
+        </script>
+        
+	<div id="line-chart"></div>
+	<script>
+	$(function() {
+		// 이상구간 rect
+		{% set rect_shape_lis = [] %}
+
+		{% for rect_lis in bar_lis %}
+			{% set i_s = rect_lis[1] %}
+			{% set i_e = rect_lis[2] %}
+			
+			{% set rect_shape = {
+				'type': "rect",
+				'x0': i_s,
+				'x1': i_e,
+				'y0': -5,
+				'y1': 5,
+				'line': {'color': "transparent"},
+				'fillcolor': "rgba(245, 227, 86, 0.4)"}
+			%}
+			
+			{% set _ = rect_shape_lis.append(rect_shape) %}
+		{% endfor %}
+
+		// 이상발생
+        
+        {% if line_lis == None %}
+            {% set line_shape_lis = [] %}
+        
+        {% else %}
+            {% set line_shape_lis = [] %}
+            {% for rul in line_lis %}
+            
+                {% set line_shape = {
+                    'type': 'line',
+                    'x0': rul,
+                    'x1': rul,
+                    'y0': -5,
+                    'y1': 5,
+                    'line': {
+                        'color': 'red',
+                        'width': 2,
+                        'dash': 'dash'}
+                    }
+                    %}
+                
+                {% set _ = line_shape_lis.append(line_shape) %}
+            {% endfor %}
+        {% endif %}
+		
+		// Plotly
+		{% for i in range(1, 11) %}
+			{% set alram_data = dic['alram' ~ i] %}
+			
+			var items = {{ alram_data | tojson | safe }};
+			
+			// 데이터 가공
+			var labels = items.map(function(item) {
+				return item.time; // 날짜 데이터를 x축 레이블로 사용
+			});
+		
+			var values = items.map(function(item) {
+				return item.col; // 데이터 값
+			});
+		
+			var trace = {
+				x: labels,
+				y: values,
+				mode: 'lines+markers',
+				type: 'scatter',
+				name: 'Data Series',
+				line: {color: 'rgb(75, 192, 192)'}
+			};
+			
+			var data = [trace];
+		
+			var layout = {
+				xaxis: {
+					range: [{{xlim_s-5}}, {{xlim_e+5}}], // row_num
+                    tickformat: '%H:%M:%S',
+				},
+				yaxis: {
+				},
+				height: 300,
+				weight: 400,
+				margin: {
+					l: 20, // 왼쪽 여백
+					r: 20, // 오른쪽 여백
+					t: 20, // 상단 여백
+					b: 80  // 하단 여백
+				},
+				shapes: [
+					{% for shape in rect_shape_lis %}
+					  {{ shape | tojson | safe }},
+					{% endfor %},
+
+                    {% for shape2 in line_shape_lis %}
+                    {{ shape2 | tojson | safe }},
+                  {% endfor %}
+				]
+			};
+			
+			// 각 그래프를 고유한 ID로 생성
+			var chartId = 'demo-chart' + {{ i }};
+			Plotly.newPlot(chartId, data, layout);
+		{% endfor %}
+
+	});
+	</script>
+
+    <!-- 추가 JavaScript 및 스크립트 로드 -->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/static/vendor/chartist/js/chartist.min.js"></script>
+    <script src="/static/scripts/klorofil-common.js"></script>
+    <script>
+        function logout() {
+            // 서버로 로그아웃 요청을 보내기 위해 fetch 사용
+            fetch('/logout', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.redirected) {
+                    // 로그아웃 후, 홈 페이지로 리디렉션
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('로그아웃 오류:', error);
+            });
+        }
+    </script>
+    <script>
+        // 파일 업로드 버튼 클릭 시 호출되는 함수
+        function uploadFile() {
+            var fileInput = document.getElementById('csvFile');
+            var file = fileInput.files[0];
+    
+            var formData = new FormData();
+            formData.append("file", file);
+    
+            // 서버에 파일을 업로드합니다.
+            $.ajax({
+                type: "POST",
+                url: "/uploadfile/",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // 파일 업로드가 성공하면 원하는 작업을 수행합니다.
+                    // response.filename를 사용하여 업로드된 파일 이름을 확인할 수 있습니다.
+                },
+                error: function (error) {
+                    // 파일 업로드 중 오류가 발생하면 처리합니다.
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // 알람 드롭다운 메뉴를 토글하기
+            $("#alarmDropdownButton").click(function() {
+                $(".notifications").toggle();
+            });
+    
+            // "더 보기" 버튼을 클릭했을 때 이벤트 처리
+            $(".view-more").click(function() {
+                // "alram.html"로 이동
+                window.location.href = "alram.html";
+            });
+        });
+    </script>
+
+    <!--모달 창 send 이벤트 처리-->
+    <script>
+        var myButton = document.getElementById('myButton');
+        var dialog1 = document.getElementById('dialog1');
+        var dialog2 = document.getElementById('dialog2');
+        
+        // "제출" 버튼 클릭 시 dialog1 열기
+        myButton.addEventListener('click', function() {
+            dialog1.showModal();
+        });
+        
+        // dialog1에서 버튼 클릭 시 처리
+        dialog1.addEventListener('click', function(e) {
+            if (e.target.value === 'confirm') {
+                // "확인" 버튼을 클릭하면 dialog1 닫고 dialog2 열기
+                dialog1.close();
+                dialog2.showModal();
+            } else if (e.target.value === 'close') {
+                // "닫기" 버튼을 클릭하면 dialog1 닫기
+                dialog1.close();
+            }
+        });
+        
+        // dialog2에서 버튼 클릭 시 처리
+        dialog2.addEventListener('click', function(e) {
+            if (e.target.value === 'close') {
+                // "닫기" 버튼을 클릭하면 dialog2 닫고 페이지 초기화
+                dialog2.close();
+                location.reload(); // 페이지 초기화
+            }
+        });
+    </script>
+
+    <script>
+        // 이상탐지 시 알람음 재생
+        function playAlarmSound() {
+            var audio = document.getElementById('alarmAudio');
+            audio.play();
+        }
+        
+        // 알림이 쌓일 때 호출되는 함수
+        function handleNewNotification() {
+            // 새로운 알림이 쌓였을 때 알림음을 재생합니다.
+            playAlarmSound();
+        }
+    </script>
+</body>
+</html>
